@@ -78,12 +78,14 @@ var structs = (function() {
               cursor = aux[1];
             }
           else
-            for (var m = 0; m < struct[1]; m++)
+            for (var m = 0; m < struct[1]; m++) {
+              obj[m] = [];
               for (var n = 0; n < struct[2]; n++) {
                 aux = this.create(type,view,cursor);
                 obj[m][n] = aux[0];
                 cursor = aux[1];
               }
+            }
           return [ obj , cursor ];
         }
       } else {
