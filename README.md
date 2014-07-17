@@ -57,5 +57,4 @@ Now, given a binary file (arrayBuffer) and a DataView, create an instance.
 To-Do
 =====
 
- - get Sizeof
  - MultiDimension arrays (currently array and matrix)

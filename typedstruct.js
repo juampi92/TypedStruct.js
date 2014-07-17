@@ -37,18 +37,26 @@ var structs = (function() {
     add: function(struct,obj){
       structList[struct] = obj;
     },
-    sizeof: function(struct){
-      /*type = this.get(type);
-      if ( type === undefined ) return 0;
-      else if ( isNum(type) )
-        return type;
-      else {
-        var sum = 0;
-        for(var key in type)
-          if(type.hasOwnProperty(key))
-            sum += this.sizeof(key) * type[key] ;
+    sizeOf: function(struct){
+      var strct = structList[struct], sum = 0;
+      
+      if ( !strct ) { // Is basic type
+        if ( !Array.isArray(struct) )
+          return _types.getSize(struct);
+        else {
+          var type = struct[0];
+
+          sum = this.sizeOf(type) * struct[1];
+          if ( struct[2] !== undefined ) sum *= struct[2];
+          return sum;
+        }
+      } else {
+        var obj = {};
+        
+        for (var i = 0, max_i = strct.length; i < max_i; i++)
+          sum += this.sizeOf(strct[i][1]);
         return sum;
-      }*/
+      }
     },
     create: function(struct,view,offset){
       var strct = structList[struct],
