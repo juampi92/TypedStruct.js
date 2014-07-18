@@ -5,7 +5,7 @@ var structs = (function() {
         // Initialize basic formats
         'byte':   [ 1, 'getInt8' ],
         'Ubyte':  [ 1, 'getUint8' ],
-        'char':   [ 1, 'getInt8' ],
+        'char':   [ 1, 'getUint8' ],
         'short':  [ 2, 'getInt16' ],
         'Ushort': [ 2, 'getUint16' ],
         'int':    [ 4, 'getInt32' ],
@@ -16,6 +16,7 @@ var structs = (function() {
         'double': [ 8, 'getFloat64' ]
       },
       getSize: function(type){
+        if ( !this.list[type] ) throw("Type " + type + " does not exist");
         return this.list[type][0];
       },
       getFunc: function(type){
@@ -65,9 +66,11 @@ var structs = (function() {
         obj;
       
       if ( !strct ) { // Is basic type
-        if ( !Array.isArray(struct) )
-          return [ view[_types.getFunc(struct)](cursor,true) , cursor + _types.getSize(struct) ];
-        else {
+        if ( !Array.isArray(struct) ) {
+          var out = view[_types.getFunc(struct)](cursor,true);
+          if ( struct == 'char' ) out = String.fromCharCode(out);
+          return [ out , cursor + _types.getSize(struct) ];
+        } else {
           var type = struct[0];
           obj = [];
 
