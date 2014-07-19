@@ -104,6 +104,5 @@ var structs = (function() {
   };
 })();
 
-if(typeof(exports) !== 'undefined') {
+if(typeof(exports) !== 'undefined')
     exports = structs;
-}
