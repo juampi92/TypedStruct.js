@@ -54,7 +54,12 @@ Now, given a binary file (arrayBuffer) and a DataView, create an instance.
 
     console.log(vector[1]); // The next byte, after the vector.
 
+How to set LittleEndian (default value is true)
+  
+    structs.setLittleEndian(false);
+
 To-Do
 =====
 
  - MultiDimension arrays (currently array and matrix)
+ - Optimization pending

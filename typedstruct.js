@@ -1,5 +1,6 @@
 var structs = (function() {
   var structList = {},
+    littleEndian = true,
     _types = {
       list: {
         // Initialize basic formats
@@ -35,74 +36,80 @@ var structs = (function() {
 
   // Structure
   return {
-    add: function(struct,obj){
+    setLittleEndian: function(val) {
+      littleEndian = val;
+    },
+    add: function(struct, obj) {
       structList[struct] = obj;
     },
-    sizeOf: function(struct){
-      var strct = structList[struct], sum = 0;
-      
-      if ( !strct ) { // Is basic type
-        if ( !Array.isArray(struct) )
+    sizeOf: function(struct) {
+      var strct = structList[struct],
+        sum = 0;
+
+      if (!strct) { // Is basic type
+        if (!Array.isArray(struct))
           return _types.getSize(struct);
         else {
           var type = struct[0];
 
           sum = this.sizeOf(type) * struct[1];
-          if ( struct[2] !== undefined ) sum *= struct[2];
+          if (struct[2] !== undefined) sum *= struct[2];
           return sum;
         }
       } else {
         var obj = {};
-        
+
         for (var i = 0, max_i = strct.length; i < max_i; i++)
           sum += this.sizeOf(strct[i][1]);
         return sum;
       }
     },
-    create: function(struct,view,offset){
+    create: function(struct, view, offset) {
       var strct = structList[struct],
         cursor = offset,
         aux = [],
         obj;
-      
-      if ( !strct ) { // Is basic type
-        if ( !Array.isArray(struct) ) {
-          var out = view[_types.getFunc(struct)](cursor,true);
-          if ( struct == 'char' ) out = String.fromCharCode(out);
-          return [ out , cursor + _types.getSize(struct) ];
+
+      if (!strct) { // Is basic type
+        if (!Array.isArray(struct)) {
+          var out = view[_types.getFunc(struct)](cursor, littleEndian);
+          if (struct == 'char')
+            if (out === 0) out = "";
+            else out = String.fromCharCode(out);
+          return [out, cursor + _types.getSize(struct)];
         } else {
           var type = struct[0];
           obj = [];
 
-          if ( struct[2] === undefined )
+          if (struct[2] === undefined)
             for (var j = 0; j < struct[1]; j++) {
-              aux = this.create(type,view,cursor);
+              aux = this.create(type, view, cursor);
               obj[j] = aux[0];
               cursor = aux[1];
-            }
-          else
+            } else
             for (var m = 0; m < struct[1]; m++) {
               obj[m] = [];
               for (var n = 0; n < struct[2]; n++) {
-                aux = this.create(type,view,cursor);
+                aux = this.create(type, view, cursor);
                 obj[m][n] = aux[0];
                 cursor = aux[1];
               }
             }
-          return [ obj , cursor ];
+          return [obj, cursor];
         }
       } else {
         obj = {};
         for (var i = 0, max_i = strct.length; i < max_i; i++) {
-          aux = this.create(strct[i][1],view,cursor);
+          aux = this.create(strct[i][1], view, cursor);
           obj[strct[i][0]] = aux[0];
           cursor = aux[1];
         }
-      return [ obj , cursor ];
+        return [obj, cursor];
       }
     }
   };
 })();
 
-if(typeof(exports) !== 'undefined')
+if(typeof(exports) !== 'undefined') {
     exports = structs;
+}
