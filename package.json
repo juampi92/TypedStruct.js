@@ -1,0 +1,33 @@
+{
+  "name": "TypedStruct.js",
+  "version": "0.1.0",
+  "description": "Simple library for reading binary structs",
+  "main": "typedstruct.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juampi92/TypedStruct.js.git"
+  },
+  "author": "Juan Pablo Barreto <juampi92@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/juampi92/TypedStruct.js/issues"
+  },
+  "keywords": [
+    "struct",
+    "dataview",
+    "binary"
+  ],
+  "homepage": "https://github.com/juampi92/TypedStruct.js",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-benchmark": "^0.3.0",
+    "grunt-mocha-test": "^0.12.7",
+    "underscore": "^1.8.3",
+    "mocha": "^2.2.5",
+    "should": "^6.0.3"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "TypedStruct.js",
+  "main": "typedstruct.js",
+  "version": "0.1",
+  "author": "Juan Pablo Barreto <juampi92@gmail.com>",
+  "description": "Simple library for reading binary structs",
+  "homepage": "https://github.com/juampi92/TypedStruct.js",
+  "bugs": {
+    "url": "https://github.com/juampi92/TypedStruct.js/issues"
+  },
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "struct",
+    "dataview",
+    "binary"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "*.*",
+    "!typedstruct.js",
+    "!typedstruct.min.js"
+  ]
+}
