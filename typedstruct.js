@@ -30,6 +30,11 @@
    */
   var DataViewProto = DataView.prototype,
     DataViewInt8 = DataViewProto.getInt8,
+
+    /**
+     * ===== TypedStruct =====
+     */
+
     /**
      * @class TypedStruct
      */
@@ -113,6 +118,17 @@
 
     };
 
+  /**
+   * ===== Struct =====
+   */
+
+  /**
+   * @class Struct
+   *
+   * @constructor
+   * @param {Object} guide Object specifying properties with it's types
+   * @param {Boolean} native If the Struct is a native type or usermade
+   */
   var Struct = function(guide, native) {
     this.size = 0;
     this.guide = null;
@@ -120,6 +136,15 @@
     this.build(guide, native);
   };
 
+  /**
+   * Calculates types, optimizes guide objects
+   * using the structs for each property, and
+   * creates native elements using DataViews
+   * methods
+   * @method build
+   * @param  {Object} guide
+   * @param  {Boolean} native
+   */
   Struct.prototype.build = function(guide, native) {
     // Check if it's a native type
     if (native) {
@@ -151,23 +176,47 @@
     }
   };
 
+  /**
+   * This method creates the structure using the optimized guide and the DataView to extract de binaries.
+   * It's never showed. It's bindined using the factory as the constructor for the struct
+   * @method _create
+   * @param  {DataViewCursor} dataViewCursor
+   * @return {Object} Returns the built structure
+   * @private
+   */
   Struct.prototype._create = function(dataViewCursor) {
     var guide = this.guide,
-      out = {};
-    for (var key in guide) {
-      if (guide.hasOwnProperty(key)) {
-        out[key] = guide[key](dataViewCursor);
-      }
+      out = {},
+      prop;
+
+    for (var i = 0, keys = Object.keys(guide), klen = keys.length; i < klen; i++) {
+      prop = keys[i];
+      out[prop] = guide[prop](dataViewCursor);
     }
     return out;
   };
 
+  /**
+   * This method optimizes the DataView call for native types.
+   * Returns a native struct and also increments the cursor for the DataView
+   * @method _native
+   * @param  {DataViewCursor} dataViewCursor
+   * @return {Native Struct}
+   * @private
+   */
   Struct.prototype._native = function(dataViewCursor) {
     var out = this.guide.call(dataViewCursor.dataView, dataViewCursor.cursor, TypedStruct._littleEndian);
     dataViewCursor.incrementCursor(this.size);
     return out;
   };
 
+  /**
+   * Native method used for creating chars. This method is used as a DataView method, so this means the DataView
+   * @method _nativeChar
+   * @param  {Numeric} cursor
+   * @param  {Boolean} littleEndian
+   * @return {String}
+   */
   Struct.prototype._nativeChar = function(cursor, littleEndian) {
     var out = DataViewInt8.call(this, cursor, littleEndian);
     if (out === 0) {
@@ -177,12 +226,20 @@
     }
   };
 
+  /**
+   * This creates the struct in it's function way with it's size as public (no closure)
+   * @method factory
+   * @return {Function}
+   */
   Struct.prototype.factory = function() {
     var func = this.create.bind(this);
     func.size = this.size;
     return func;
   };
 
+  /**
+   * ===== DataViewCursor =====
+   */
 
   /**
    * @class DataViewCursor
@@ -292,10 +349,9 @@
       }
     };
 
-    for (var type in basicTypes) {
-      if (basicTypes.hasOwnProperty(type)) {
-        TypedStruct.add(type, basicTypes[type], true);
-      }
+    for (var prop, i = 0, keys = Object.keys(basicTypes), klen = keys.length; i < klen; i++) {
+      prop = keys[i];
+      TypedStruct.add(prop, basicTypes[prop], true);
     }
   })(TypedStruct);
 

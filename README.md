@@ -1,65 +1,108 @@
-TypedStruct.js
-==============
+# TypedStruct.js
 
 A simple plugin for Typed Structs in js for reading a binary file.
 
-Create Struct
-=============
+### Create Struct
 
-    structs.add('struct_name',[
-      // Var name  -  Type
-      [ 'nameofvar' , 'int' ],
-      // Array name   - [   Type  - Dimentions ]
-      [ 'nameofarray' , [ 'short' , 2 ] ],
-      // Matrix name   - [   Type  - Dimentions ]
-      [ 'nameofmatrix' , [ 'short' , 2 , 2 ] ],
-    ]);
+```js
+structs.add('struct_name', {
+  // Property name : type
+  'name_of_property': 'int',
+  // Also you could use previously defined structures
+  'sub_struct': 'sub_struct_name',
+  // Or specify arrays. First you tell it's type, and then it's dimentions (as needed)
+  'array_property': [ 'short' , 2 , 2 , ... ],
+});
+```
 
-Basic Types
-===========
+### Basic Types
     
-    // Name   bytes
-    'byte'    1
-    'Ubyte'   1
-    'char'    1
-    'short'   2
-    'Ushort'  2
-    'int'     4
-    'Uint'    4
-    'long'    4
-    'Ulong'   4
-    'float'   4
-    'double'  8
+```js
+  // Name    bytes
+  'byte':      1
+  'Ubyte':     1
+  'char':      1
+  'short':     2
+  'Ushort':    2
+  'int' :      4
+  'Uint':      4
+  'long':      4
+  'Ulong':     4
+  'float':     4
+  'double':    8
+```
 
-Use
-====
+### Use
 
-Create a struct, for example
+##### Create a struct
 
-    structs.add('vector',[
-      [ 'x' , 'int' ],
-      [ 'y' , 'int' ],
-      [ 'z' , 'int' ]
-    ]);
+```js
+ TypedStruct.add('point', {
+   'x': 'int',
+   'y': 'int',
+   'z': 'int'
+ });
+```
 
 Now, given a binary file (arrayBuffer) and a DataView, create an instance.
 
-    var view = DataView(arrayBuffer);
+```js
+var dataview = DataView(arrayBuffer);
 
-    // Asuming that it's a binary content of one vector
-    var vector = structs.create('vector',view,0);
+// Asuming that it's a binary content of one vector
+var DataViewCursor = TypedStruct.from(dataview, 0); // Start the cursor at 0
+var point = DataViewCursor.create('point');
 
-    // Now vector is an array
-    console.log(vector[0]); // Should output an object having 3 properties: x,y,z (all integers)
+// Now the DataViewCursor is increased the size of the point (in this case, each int is 4, so 3x4 = 24)
+DataViewCursor.cursor;
 
-    console.log(vector[1]); // The next byte, after the vector.
+// Keep creating more structures, and never mind about the cursor, as long as they are in order
+var int = DataViewCursor.create('Uint');
+```
 
-How to set LittleEndian (default value is true)
+##### LittleEndian 
+
+Default value is `true`.
   
-    structs.setLittleEndian(false);
+```js
+structs.setLittleEndian(false);
+```
 
-To-Do
-=====
+##### Use DataView:
 
- - MultiDimension arrays (currently array and matrix)
- - Optimization pending
+```js
+var DataViewCursor = TypedStruct.from(dataview, offset); // The starting offset is 0 by default
+
+// Get the cursor position anytime
+var cursor = DataViewCursor.cursor; // cursor = 0
+
+ // Set the cursor position anytime
+DataViewCursor.setCursor(10); // cursor = 10
+
+// Increment the cursor position anytime
+DataViewCursor.incrementCursor(15); // cursor = 15
+
+// The cursor incremets itself when creating structures
+DataViewCursor.create('int'); // cursor = 15 + 4 = 19
+```
+
+Except for create (which returns the created structure), every DataViewCursor method is chainable.
+
+##### Create Arrays
+
+```js
+var DataViewCursor = TypedStruct.from(dataview, offset);
+
+var array = DataViewCursor.create('int', 10);
+
+// Now array is an Array of 10 integers
+```
+
+##### Char Support
+
+If you create a char type, the output will be a single character in string format. If you create an array of chars, the result will be a string
+
+### To-Do
+
+ - MultiDimension arrays (currently none)
+ - Strings for array of chars
