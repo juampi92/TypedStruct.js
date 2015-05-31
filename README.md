@@ -5,7 +5,7 @@ A simple plugin for Typed Structs in js for reading a binary file.
 ### Create Struct
 
 ```js
-structs.add('struct_name', {
+TypedStruct.add('struct_name', {
   // Property name : type
   'name_of_property': 'int',
   // Also you could use previously defined structures
@@ -44,19 +44,21 @@ structs.add('struct_name', {
  });
 ```
 
-Now, given a binary file (arrayBuffer) and a DataView, create an instance.
+Now, given a binary file (arrayBuffer) and a DataView:
 
 ```js
 var dataview = DataView(arrayBuffer);
 
 // Asuming that it's a binary content of one vector
-var DataViewCursor = TypedStruct.from(dataview, 0); // Start the cursor at 0
+var DataViewCursor = TypedStruct.from(dataview);
 var point = DataViewCursor.create('point');
 
-// Now the DataViewCursor is increased the size of the point (in this case, each int is 4, so 3x4 = 24)
-DataViewCursor.cursor;
+// Now the DataViewCursor is increased the size of the
+//   point (in this case, each int is 4, so 3x4 = 24)
+var cursor = DataViewCursor.cursor;
 
-// Keep creating more structures, and never mind about the cursor, as long as they are in order
+// Keep creating more structures, and never mind about
+//   the cursor, as long as they are in order
 var int = DataViewCursor.create('Uint');
 ```
 
@@ -71,7 +73,7 @@ structs.setLittleEndian(false);
 ##### Use DataView:
 
 ```js
-var DataViewCursor = TypedStruct.from(dataview, offset); // The starting offset is 0 by default
+var DataViewCursor = TypedStruct.from(dataview, starting_offset); // 0 by default
 
 // Get the cursor position anytime
 var cursor = DataViewCursor.cursor; // cursor = 0

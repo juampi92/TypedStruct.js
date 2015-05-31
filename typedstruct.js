@@ -14,7 +14,7 @@
  *    });
  *
  *  ----- Create Structure -----
- *    TypedStruct.from(DataView, offset).create('structure_name', amount = 1);
+ *    TypedStruct.from(DataView, offset = 0).create('structure_name', amount = 1);
  *
  */
 
@@ -55,7 +55,7 @@
 
       /**
        * Holds all the processed structs
-       * @propery _structs
+       * @property _structs
        * @type {Object}
        */
       _structs: {},
@@ -139,8 +139,7 @@
   /**
    * Calculates types, optimizes guide objects
    * using the structs for each property, and
-   * creates native elements using DataViews
-   * methods
+   * creates native elements using DataViews methods
    * @method build
    * @param  {Object} guide
    * @param  {Boolean} native
@@ -151,7 +150,7 @@
 
       // Take the size from the guide
       this.size = guide.size;
-      // If it's a char, pay spetial attention
+      // If it's a char, pay special attention
       if (guide.type === 'char') {
         this.guide = this._nativeChar; // Check problems with this context
       } else {
@@ -162,38 +161,128 @@
       // Or if it's a user made structure
     } else {
 
-      var cursor;
       this.guide = {};
 
-      for (var prop in guide) {
-        if (guide.hasOwnProperty(prop)) {
-          cursor = TypedStruct._getStruct(guide[prop]);
-          this.guide[prop] = cursor;
-          this.size += cursor.size;
-        }
+      var prop,
+        cursor,
+        i = 0,
+        keys = Object.keys(guide),
+        klen = keys.length;
+      for (; i < klen; i++) {
+        prop = keys[i];
+        cursor = this._getStructure(guide[prop]);
+        this.guide[prop] = cursor;
+        this.size += cursor.size;
       }
       this.create = this._create;
     }
   };
 
   /**
-   * This method creates the structure using the optimized guide and the DataView to extract de binaries.
-   * It's never showed. It's bindined using the factory as the constructor for the struct
-   * @method _create
-   * @param  {DataViewCursor} dataViewCursor
-   * @return {Object} Returns the built structure
-   * @private
+   * Tells if it's a structure, or an Array and returns it's generative Structure
+   * @method _getStructure
+   * @param  {String | Array} propertyGuide
+   * @return {Function}
    */
-  Struct.prototype._create = function(dataViewCursor) {
-    var guide = this.guide,
-      out = {},
-      prop;
-
-    for (var i = 0, keys = Object.keys(guide), klen = keys.length; i < klen; i++) {
-      prop = keys[i];
-      out[prop] = guide[prop](dataViewCursor);
+  Struct.prototype._getStructure = function(propertyGuide) {
+    var prop;
+    if (typeof propertyGuide === 'string') {
+      prop = TypedStruct._getStruct(propertyGuide);
+    } else {
+      prop = this._generateArray.apply(this, propertyGuide);
+      prop.size = this._arraySize(propertyGuide);
     }
-    return out;
+    return prop;
+  };
+
+  /**
+   *
+   * Optimized for up to 3 dimension arrays
+   * @method _generateArray
+   * @param  {String} type
+   * @param  {Numeric} x
+   * @param  {Numeric} y
+   * @param  {Numeric} z
+   * @return {Function}
+   */
+  Struct.prototype._generateArray = function(type, x, y, z) {
+    var struct = TypedStruct._getStruct(type),
+      argslen = arguments.length - 1;
+
+    switch (argslen) {
+      case 1:
+        return this._arrays[1].bind(this, struct, x);
+      case 2:
+        return this._arrays[2].bind(this, struct, x, y);
+      case 3:
+        return this._arrays[3].bind(this, struct, x, y, z);
+      default:
+        return this._arrays.other.bind(this, struct, Array.prototype.slice.call(arguments, 1));
+    }
+  };
+
+  /**
+   * Calculates the byte size of the array
+   * @method _arraySize
+   * @param  {Array} properties
+   * @return {Numeric}
+   */
+  Struct.prototype._arraySize = function(properties) {
+    var type = TypedStruct._getStruct(properties[0]),
+      sum = type.size * properties[i];
+    for (var i = 2, len = properties.length; i < len; i++) {
+      sum *= properties[i];
+    }
+    return sum;
+  };
+
+  /**
+   * Optimized array-generative structures for 1, 2 and 3 dimentions
+   * @property _arrays
+   * @type {Object}
+   */
+  Struct.prototype._arrays = {
+    '1': function(structure, x, dataViewCursor) {
+      var out = [];
+      for (var _x = 0; _x < x; _x++) {
+        out[_x] = structure(dataViewCursor);
+      }
+      return out;
+    },
+    '2': function(structure, x, y, dataViewCursor) {
+      var out = [],
+        cursor,
+        _x, _y;
+      for (_x = 0; _x < x; _x++) {
+        out[_x] = [];
+        cursor = out[_x];
+        for (_y = 0; _y < y; _y++) {
+          cursor[_y] = structure(dataViewCursor);
+        }
+      }
+      return out;
+    },
+    '3': function(structure, x, y, z, dataViewCursor) {
+      var out = [],
+        cursorx, cursory,
+        _x, _y, _z;
+      for (_x = 0; _x < x; _x++) {
+        out[_x] = [];
+        cursorx = out[_x];
+        for (_y = 0; _y < y; _y++) {
+          cursorx[_y] = [];
+          cursory = cursorx[_y];
+          for (_z = 0; _z < z; _z++) {
+            cursory[_z] = structure(dataViewCursor);
+          }
+        }
+      }
+      return out;
+    },
+    'other': function(structure, dim, dataViewCursor) {
+      // To Do
+    },
+
   };
 
   /**
@@ -224,6 +313,26 @@
     } else {
       return String.fromCharCode(out);
     }
+  };
+
+  /**
+   * This method creates the structure using the optimized guide and the DataView to extract de binaries.
+   * It's never showed. It's bindined using the factory as the constructor for the struct
+   * @method _create
+   * @param  {DataViewCursor} dataViewCursor
+   * @return {Object} Returns the built structure
+   * @private
+   */
+  Struct.prototype._create = function(dataViewCursor) {
+    var guide = this.guide,
+      out = {},
+      prop;
+
+    for (var i = 0, keys = Object.keys(guide), klen = keys.length; i < klen; i++) {
+      prop = keys[i];
+      out[prop] = guide[prop](dataViewCursor);
+    }
+    return out;
   };
 
   /**
