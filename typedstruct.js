@@ -155,7 +155,7 @@
     var guide = this.guide,
       out = {};
     for (var key in guide) {
-      if (guide.hasOwnProperty(prop)) {
+      if (guide.hasOwnProperty(key)) {
         out[key] = guide[key](dataViewCursor);
       }
     }
