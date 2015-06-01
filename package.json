@@ -23,10 +23,12 @@
   "homepage": "https://github.com/juampi92/TypedStruct.js",
   "dependencies": {},
   "devDependencies": {
+    "benchmark": "^1.0.0",
     "grunt": "^0.4.5",
     "grunt-benchmark": "^0.3.0",
     "grunt-mocha-test": "^0.12.7",
-    "underscore": "^1.8.3",
+    "jParser": "^1.0.2",
+    "jdataview": "^2.5.0",
     "mocha": "^2.2.5",
     "should": "^6.0.3"
   }
