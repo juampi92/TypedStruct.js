@@ -10,7 +10,7 @@ TypedStruct.add('struct_name', {
   'name_of_property': 'int',
   // Also you could use previously defined structures
   'sub_struct': 'sub_struct_name',
-  // Or specify arrays. First you tell it's type, and then it's dimentions (as needed)
+  // Or specify arrays. First you tell it's type, and then it's dimensions (as needed)
   'array_property': [ 'short' , 2 , 2 , ... ],
 });
 ```
@@ -49,7 +49,7 @@ Now, given a binary file (arrayBuffer) and a DataView:
 ```js
 var dataview = DataView(arrayBuffer);
 
-// Asuming that it's a binary content of one vector
+// Assuming that it's a binary content of one vector
 var DataViewCursor = TypedStruct.from(dataview);
 var point = DataViewCursor.create('point');
 
@@ -84,7 +84,7 @@ DataViewCursor.setCursor(10); // cursor = 10
 // Increment the cursor position anytime
 DataViewCursor.incrementCursor(15); // cursor = 15
 
-// The cursor incremets itself when creating structures
+// The cursor increments itself when creating structures
 DataViewCursor.create('int'); // cursor = 15 + 4 = 19
 ```
 
@@ -106,5 +106,7 @@ If you create a char type, the output will be a single character in string forma
 
 ### To-Do
 
- - MultiDimension arrays (currently none)
+ - MultiDimension arrays (currently 1, 2 and 3 dimensions)
  - Strings for array of chars
+ - support for int4/uint4
+ - Allow type declarations directly (uint8 instead of Ubyte)
