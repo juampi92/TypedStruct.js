@@ -1,5 +1,5 @@
 {
-  "name": "TypedStruct.js",
+  "name": "typedstruct.js",
   "version": "0.1.0",
   "description": "Simple library for reading binary structs",
   "author": "Juan Pablo Barreto <juampi92@gmail.com>",

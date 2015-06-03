@@ -20,8 +20,11 @@ module.exports = function(grunt) {
       build: {
         options: {
           mangle: false,
-          banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-            '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
+          banner: '/*!\n' + 
+          ' * TypedStruct.js - v<%= pkg.version %>\n' + 
+          ' * (c) <%= pkg.author %>\n' + 
+          ' * <%= pkg.homepage %>\n' + 
+          ' */\n'
         },
         files: {
           'typedstruct.min.js': ['typedstruct.js']
@@ -37,7 +40,7 @@ module.exports = function(grunt) {
       // update bower.json with data from package.json 
       bower: {
         dest: 'bower.json', // where to write to 
-        fields: 'version, name, main, description, author, repository, keywords'
+        fields: 'version, name, main, description, author, license, repository, keywords'
       }
     }
   });
