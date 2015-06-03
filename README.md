@@ -108,5 +108,5 @@ If you create a char type, the output will be a single character in string forma
 
  - MultiDimension arrays (currently 1, 2 and 3 dimensions)
  - Strings for array of chars
- - support for int4/uint4
+ - support for int4/uint4 and flags
  - Allow type declarations directly (uint8 instead of Ubyte)

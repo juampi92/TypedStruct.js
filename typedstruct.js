@@ -1,29 +1,24 @@
-/**
- * TypedStruct.js
- *
- *  Create C-like structs using javascript's ArrayBuffers and DataView.
- *  Transform bytes into meaningful structures.
- *
- *  HOW TO:
- *
- *  ----- Add Structure -----
- *    TypedStruct.add('structure_name', {
- *      'x': 'int',
- *      'y': 'int',
- *      'z': 'int'
- *    });
- *
- *  ----- Create Structure -----
- *    TypedStruct.from(DataView, offset = 0).create('structure_name', amount = 1);
- *
- */
-
 (function(global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
-    global.typedStruct = factory()
+    global.TypedStruct = factory()
 }(this, function() {
   'use strict';
+
+  /**
+   *  HOW TO:
+   *
+   *  ----- Add Structure -----
+   *    TypedStruct.add('structure_name', {
+   *      'x': 'int',
+   *      'y': 'int',
+   *      'z': 'int'
+   *    });
+   *
+   *  ----- Create Structure -----
+   *    TypedStruct.from(DataView, offset = 0).create('structure_name', amount = 1);
+   *
+   */
 
   /**
    * Cache methods

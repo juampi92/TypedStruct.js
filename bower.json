@@ -1,10 +1,10 @@
 {
   "name": "TypedStruct.js",
-  "main": "typedstruct.js",
-  "version": "0.1",
-  "author": "Juan Pablo Barreto <juampi92@gmail.com>",
+  "version": "0.1.0",
   "description": "Simple library for reading binary structs",
+  "author": "Juan Pablo Barreto <juampi92@gmail.com>",
   "homepage": "https://github.com/juampi92/TypedStruct.js",
+  "main": "typedstruct.js",
   "bugs": {
     "url": "https://github.com/juampi92/TypedStruct.js/issues"
   },
@@ -18,8 +18,12 @@
   ],
   "license": "MIT",
   "ignore": [
-    "*.*",
+    "*",
     "!typedstruct.js",
     "!typedstruct.min.js"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juampi92/TypedStruct.js.git"
+  }
 }

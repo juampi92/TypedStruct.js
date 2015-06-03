@@ -2,21 +2,7 @@ module.exports = function(grunt) {
   'use strict';
 
   grunt.initConfig({
-    // Benchmarks
-    benchmark: {
-      all: {
-        src: ['benchmarks/**/*.bench.js'],
-        dest: 'results/all.csv'
-      },
-      experiments: {
-        src: ['benchmarks/experiments/*.bench.js'],
-        dest: 'results/experiments.csv'
-      },
-      algorithms: {
-        src: ['benchmarks/algorithms/*.bench.js'],
-        dest: 'results/algorithms.csv'
-      }
-    },
+    pkg: grunt.file.readJSON('package.json'),
     // Mocha
     mochaTest: {
       test: {
@@ -28,12 +14,38 @@ module.exports = function(grunt) {
         },
         src: ['tests/**/*.test.js']
       }
+    },
+    // Uglify
+    uglify: {
+      build: {
+        options: {
+          mangle: false,
+          banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+            '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
+        },
+        files: {
+          'typedstruct.min.js': ['typedstruct.js']
+        }
+      }
+    },
+    update_json: {
+      // set some task-level options 
+      options: {
+        src: 'package.json',
+        indent: '  '
+      },
+      // update bower.json with data from package.json 
+      bower: {
+        dest: 'bower.json', // where to write to 
+        fields: 'version, name, main, description, author, repository, keywords'
+      }
     }
   });
 
-  grunt.loadNpmTasks('grunt-benchmark');
   grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-update-json');
 
-  grunt.registerTask('bench', ['benchmark:all']);
+  grunt.registerTask('build', ['uglify','update_json']);
   grunt.registerTask('test', ['mochaTest']);
 };
