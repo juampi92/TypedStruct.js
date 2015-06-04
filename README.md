@@ -2,6 +2,20 @@
 
 A simple plugin for Typed Structs in js for reading a binary file.
 
+### Install
+
+Usin npm
+```
+npm install typedstruct.js
+```
+
+Using Bower:
+```
+bower install typedstruct.js
+```
+
+Or download it from [here](https://github.com/juampi92/TypedStruct.js/releases/).
+
 ### Create Struct
 
 ```js
