@@ -1,4 +1,5 @@
 # TypedStruct.js
+[![Build Status](https://travis-ci.org/juampi92/TypedStruct.js.svg)](https://travis-ci.org/juampi92/TypedStruct.js)
 
 A simple plugin for Typed Structs in js for reading a binary file.
 
